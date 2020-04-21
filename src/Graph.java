@@ -26,20 +26,16 @@ public class Graph {
                     q.add(G[i.to]);
                     G[i.to].visited = true;
                     G[i.to].parent = start.nodeID;
-                    }
                 }
             }
-        if (start == end) {
-            System.out.println("hello");
-            int max = maxFlow(start);
+        }
+            int max = maxFlow(end);
             if (max == 0){
                 return false;
-            }
-            updateCap(G[vertexCt -1],max);
         }
+        updateCap(G[vertexCt - 1],max);
         return true;
     }
-
     public int maxFlow(GraphNode end){
         ArrayList<Integer> list = new ArrayList<>();
         int check = 10;
@@ -56,13 +52,11 @@ public class Graph {
                 }
             }
         list.add(G[0].nodeID);
-//        updateCap(G[vertexCt - 1],check);
         Collections.reverse(list);
         System.out.println("Max Flow: " + check + " " + list);
             return check;
         }
         public void updateCap(GraphNode end, int mFlow){
-            int check = 10;
             while(end != G[0]){
                 GraphNode temp = G[end.parent];
                 for (GraphNode.EdgeInfo i : temp.succ){
@@ -91,10 +85,10 @@ public class Graph {
                 start = q.remove();
                 for (GraphNode.EdgeInfo i : start.succ){
                     q.add(G[i.to]);
+                    G[i.to].visited = false;
                     if (start == end){
                         return;
                     }
-                    G[i.to].visited = false;
                 }
         }
     }
@@ -104,7 +98,7 @@ public class Graph {
         graph1.makeGraph("demands1.txt");
         System.out.println(graph1.toString());
         while (graph1.findPath(graph1.G[0], graph1.G[graph1.vertexCt - 1])) {
-            System.out.println(graph1.findPath(graph1.G[0], graph1.G[graph1.vertexCt - 1]));
+            graph1.findPath(graph1.G[0], graph1.G[graph1.vertexCt - 1]);
 
         }
     }
