@@ -16,20 +16,26 @@ public class Graph {
         this.graphName = "";
     }
     public boolean findPath(GraphNode start, GraphNode end){
+        Reset(G[0], G[vertexCt -1]);
         Queue<GraphNode> q = new LinkedList<>();
         q.add(start);
         while (!q.isEmpty()) {
             start = q.remove();
             for (GraphNode.EdgeInfo i : start.succ) {
-                G[i.to].parent = start.nodeID;
                 if (i.capacity != 0 && !G[i.to].visited) {
                     q.add(G[i.to]);
                     G[i.to].visited = true;
+                    G[i.to].parent = start.nodeID;
+                    }
                 }
             }
-        }
         if (start == end) {
-            return maxFlow(start) != 0;
+            System.out.println("hello");
+            int max = maxFlow(start);
+            if (max == 0){
+                return false;
+            }
+            updateCap(G[vertexCt -1],max);
         }
         return true;
     }
@@ -41,8 +47,7 @@ public class Graph {
                 GraphNode temp = G[end.parent];
                 for (GraphNode.EdgeInfo i : temp.succ){
                     if(G[i.to] == end){
-
-                        if(i.capacity <= check ){
+                        if(i.capacity <= check){
                             check = i.capacity;
                         }
                         list.add(end.nodeID);
@@ -51,25 +56,35 @@ public class Graph {
                 }
             }
         list.add(G[0].nodeID);
-        updateCap(list,check);
+//        updateCap(G[vertexCt - 1],check);
         Collections.reverse(list);
         System.out.println("Max Flow: " + check + " " + list);
             return check;
         }
-
-        public void updateCap(ArrayList<Integer> list, int mFlow){
-           for (int i = 0; i <= list.size() ;i++){
-               for (GraphNode.EdgeInfo j : G[i].succ){
-                   if(list.contains(G[j.from].nodeID)) {
-                       j.capacity -= mFlow;
-                   }
-               }
-           }
-           Reset(G[0], G[vertexCt -1]);
+        public void updateCap(GraphNode end, int mFlow){
+            int check = 10;
+            while(end != G[0]){
+                GraphNode temp = G[end.parent];
+                for (GraphNode.EdgeInfo i : temp.succ){
+                    if(G[i.to] == end){
+                        i.capacity -= mFlow;
+                        end = temp;
+                    }
+                }
+            }
+//           for (int i = 0; i <= list.size() ;i++){
+//               for (GraphNode.EdgeInfo j : G[i].succ){
+//                  if(list.contains(G[j.to].nodeID)) {
+//                       j.capacity -= mFlow;
+//                   }
+//               }
+//           }
+//           Reset(G[0], G[vertexCt -1]);
         }
 
         public void Reset(GraphNode start, GraphNode end){
             Queue<GraphNode> q = new LinkedList<>();
+            end.visited = false;
             start.visited = false;
             q.add(start);
             while(!q.isEmpty()){
